@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeguridadPro | Soluciones Integrales de Seguridad Electrónica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'rajdhani': ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        'cyber-blue': '#00f0ff',
+                        'cyber-dark': '#0a0e27',
+                        'cyber-purple': '#7000ff',
+                        'alert-red': '#ff003c',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'scan': 'scan 4s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        scan: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .grid-overlay {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.2);
+        }
+        .cctv-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f0ff, transparent);
+            animation: scan 3s linear infinite;
+            opacity: 0.5;
+        }
+        .glitch {
+            position: relative;
+        }
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff003c;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00f0ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(30px, 9999px, 10px, 0); }
+            20% { clip: rect(80px, 9999px, 90px, 0); }
+            40% { clip: rect(10px, 9999px, 50px, 0); }
+            60% { clip: rect(60px, 9999px, 20px, 0); }
+            80% { clip: rect(40px, 9999px, 70px, 0); }
+            100% { clip: rect(90px, 9999px, 30px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(60px, 9999px, 40px, 0); }
+            20% { clip: rect(20px, 9999px, 60px, 0); }
+            40% { clip: rect(90px, 9999px, 10px, 0); }
+            60% { clip: rect(10px, 9999px, 80px, 0); }
+            80% { clip: rect(50px, 9999px, 30px, 0); }
+            100% { clip: rect(70px, 9999px, 50px, 0); }
+        }
+        
+        /* Gallery Styles */
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        
+        /* Admin Styles */
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .admin-login {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.98);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        .admin-login.active {
+            display: flex;
+        }
+        .delete-btn {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover .delete-btn {
+            opacity: 1;
+        }
+        .admin-badge {
+            display: none;
+        }
+        .admin-mode .admin-badge {
+            display: inline-flex;
+        }
+        .admin-mode .delete-btn {
+            opacity: 1;
+        }
+        .admin-mode .upload-section {
+            display: block;
+        }
+        .upload-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-rajdhani">
+
+    <!-- Admin Login Modal -->
+    <div id="adminLogin" class="admin-login">
+        <div class="glass-panel p-8 rounded-2xl max-w-md w-full mx-4 border border-cyber-blue/50">
+            <div class="text-center mb-6">
+                <i class="fas fa-lock text-4xl text-cyber-blue mb-4"></i>
+                <h2 class="font-orbitron text-2xl font-bold">Acceso Administrador</h2>
+                <p class="text-gray-400 text-sm mt-2">Ingresa tu contraseña para gestionar la galería</p>
+            </div>
+            <form onsubmit="return checkPassword(event)">
+                <div class="mb-4">
+                    <input type="password" id="adminPassword" placeholder="Contraseña" 
+                        class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors text-center">
+                </div>
+                <button type="submit" class="w-full bg-cyber-blue text-cyber-dark font-bold py-3 rounded-lg hover:bg-white transition-all">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Ingresar
+                </button>
+                <button type="button" onclick="closeAdminLogin()" class="w-full mt-3 border border-gray-600 text-gray-400 font-bold py-3 rounded-lg hover:border-cyber-blue hover:text-cyber-blue transition-all">
+                    <i class="fas fa-times mr-2"></i> Cancelar
+                </button>
+            </form>
+            <p id="loginError" class="text-red-500 text-sm text-center mt-4 hidden">Contraseña incorrecta</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b border-cyber-blue/20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-shield-alt text-3xl text-cyber-blue animate-pulse-slow"></i>
+                <span class="font-orbitron text-2xl font-bold tracking-wider text-white">
+                    SEGURIDAD<span class="text-cyber-blue">PRO</span>
+                </span>
+                <span id="adminIndicator" class="admin-badge ml-3 px-3 py-1 bg-cyber-blue/20 border border-cyber-blue text-cyber-blue text-xs rounded-full items-center gap-2">
+                    <i class="fas fa-user-shield"></i> MODO ADMIN
+                </span>
+            </div>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#inicio" class="hover:text-cyber-blue transition-colors duration-300 text-lg font-medium">Inicio</a>
+                <a href="#servicios" class="hover:text-cyber-blue transition-colors duration-300 text-lg font-medium">Servicios</a>
+                <a href="#galeria" class="hover:text-cyber-blue transition-colors duration-300 text-lg font-medium">Galería</a>
+                <a href="#proyectos" class="hover:text-cyber-blue transition-colors duration-300 text-lg font-medium">Proyectos</a>
+                <a href="#cotizacion" class="px-6 py-2 bg-cyber-blue text-cyber-dark font-bold rounded hover:bg-white transition-all duration-300">
+                    Cotización Gratis
+                </a>
+                <!-- Admin Button -->
+                <button onclick="openAdminLogin()" id="adminBtn" class="text-gray-400 hover:text-cyber-blue transition-colors" title="Acceso Administrador">
+                    <i class="fas fa-cog text-xl"></i>
+                </button>
+                <button onclick="logoutAdmin()" id="logoutBtn" class="hidden text-red-400 hover:text-red-300 transition-colors" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                </button>
+            </div>
+            <button class="md:hidden text-2xl text-cyber-blue" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-cyber-dark border-t border-cyber-blue/20">
+            <div class="flex flex-col p-4 space-y-4">
+                <a href="#inicio" class="text-white hover:text-cyber-blue">Inicio</a>
+                <a href="#servicios" class="text-white hover:text-cyber-blue">Servicios</a>
+                <a href="#galeria" class="text-white hover:text-cyber-blue">Galería</a>
+                <a href="#proyectos" class="text-white hover:text-cyber-blue">Proyectos</a>
+                <a href="#cotizacion" class="text-cyber-blue font-bold">Cotización</a>
+                <button onclick="openAdminLogin()" class="text-left text-gray-400 hover:text-cyber-blue flex items-center gap-2">
+                    <i class="fas fa-cog"></i> Admin
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0 grid-overlay opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-cyber-dark via-transparent to-cyber-dark"></div>
+        
+        <!-- Animated Background Elements -->
+        <div class="absolute top-20 left-10 w-72 h-72 bg-cyber-blue/20 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-cyber-purple/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div class="mb-6 inline-block">
+                <span class="px-4 py-1 border border-cyber-blue text-cyber-blue text-sm tracking-widest uppercase rounded-full">
+                    Protección Inteligente 24/7
+                </span>
+            </div>
+            <h1 class="font-orbitron text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight glitch" data-text="SEGURIDAD DEL FUTURO">
+                SEGURIDAD DEL <span class="text-cyber-blue neon-text">FUTURO</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-light">
+                Instalación profesional de cámaras de seguridad, citófonos inteligentes, 
+                sistemas de alarma y proyectos integrales para fincas, edificios y barrios.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="#cotizacion" class="px-8 py-4 bg-cyber-blue text-cyber-dark font-bold text-lg rounded hover:bg-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                    <i class="fas fa-rocket"></i>
+                    Solicitar Proyecto
+                </a>
+                <a href="#servicios" class="px-8 py-4 border-2 border-cyber-blue text-cyber-blue font-bold text-lg rounded hover:bg-cyber-blue hover:text-cyber-dark transition-all duration-300 flex items-center gap-2">
+                    <i class="fas fa-play-circle"></i>
+                    Ver Servicios
+                </a>
+            </div>
+            
+            <!-- Stats -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl font-orbitron font-bold text-cyber-blue">500+</div>
+                    <div class="text-gray-400 mt-2">Proyectos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-orbitron font-bold text-cyber-blue">24/7</div>
+                    <div class="text-gray-400 mt-2">Monitoreo</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-orbitron font-bold text-cyber-blue">100%</div>
+                    <div class="text-gray-400 mt-2">Garantía</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-orbitron font-bold text-cyber-blue">15+</div>
+                    <div class="text-gray-400 mt-2">Años Exp.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="py-20 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-4">
+                    NUESTROS <span class="text-cyber-blue">SERVICIOS</span>
+                </h2>
+                <div class="w-24 h-1 bg-cyber-blue mx-auto"></div>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">
+                    Soluciones tecnológicas avanzadas para la protección de su patrimonio
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- CCTV -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-blue/10 rounded-full blur-2xl group-hover:bg-cyber-blue/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-cyber-blue/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-video text-3xl text-cyber-blue"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Cámaras de Seguridad</h3>
+                        <p class="text-gray-400 mb-4">
+                            Instalación de cámaras IP, CCTV analógico y sistemas HDCVI. 
+                            Visión nocturna, detección de movimiento y acceso remoto.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-cyber-blue mr-2"></i>Alta definición 4K/8MP</li>
+                            <li><i class="fas fa-check text-cyber-blue mr-2"></i>Vista desde celular</li>
+                            <li><i class="fas fa-check text-cyber-blue mr-2"></i>Almacenamiento en nube</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Video Porteros -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-purple/10 rounded-full blur-2xl group-hover:bg-cyber-purple/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-cyber-purple/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-door-open text-3xl text-cyber-purple"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Video Porteros & Citófonos</h3>
+                        <p class="text-gray-400 mb-4">
+                            Sistemas de comunicación audiovisual para edificios y casas. 
+                            Apertura remota, registro de visitantes y múltiples pantallas.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-cyber-purple mr-2"></i>Pantalla táctil HD</li>
+                            <li><i class="fas fa-check text-cyber-purple mr-2"></i>Reconocimiento facial</li>
+                            <li><i class="fas fa-check text-cyber-purple mr-2"></i>Integración con celular</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Alarmas -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-alert-red/10 rounded-full blur-2xl group-hover:bg-alert-red/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-alert-red/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-bell text-3xl text-alert-red"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Sistemas de Alarma</h3>
+                        <p class="text-gray-400 mb-4">
+                            Alarmas contra intrusos, incendios y emergencias médicas. 
+                            Sensores inalámbricos, centrales monitoreadas y respuesta inmediata.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-alert-red mr-2"></i>Sensores perimetrales</li>
+                            <li><i class="fas fa-check text-alert-red mr-2"></i>Detección de humo/CO</li>
+                            <li><i class="fas fa-check text-alert-red mr-2"></i>Botón de pánico</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Control Acceso -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-fingerprint text-3xl text-green-400"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Control de Acceso</h3>
+                        <p class="text-gray-400 mb-4">
+                            Sistemas biométricos, tarjetas RFID y códigos PIN. 
+                            Gestión de horarios, registros de entrada y salida.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-green-400 mr-2"></i>Huella digital</li>
+                            <li><i class="fas fa-check text-green-400 mr-2"></i>Reconocimiento facial</li>
+                            <li><i class="fas fa-check text-green-400 mr-2"></i>Cerraduras electrónicas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Cercas Eléctricas -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-bolt text-3xl text-yellow-400"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Cercas Eléctricas</h3>
+                        <p class="text-gray-400 mb-4">
+                            Instalación de cercas electrificadas para fincas y predios. 
+                            Energizadores de alta potencia y alarmas de corte.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-yellow-400 mr-2"></i>Alta tensión regulada</li>
+                            <li><i class="fas fa-check text-yellow-400 mr-2"></i>Resistente a clima</li>
+                            <li><i class="fas fa-check text-yellow-400 mr-2"></i>Batería de respaldo</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Redes -->
+                <div class="service-card glass-panel p-8 rounded-2xl relative overflow-hidden group cursor-pointer transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-orange-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-network-wired text-3xl text-orange-400"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-3">Redes y Cableado</h3>
+                        <p class="text-gray-400 mb-4">
+                            Instalación de infraestructura de red, cableado estructurado 
+                            y optimización de conectividad para sistemas de seguridad.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><i class="fas fa-check text-orange-400 mr-2"></i>Fibra óptica</li>
+                            <li><i class="fas fa-check text-orange-400 mr-2"></i>Cableado CAT6</li>
+                            <li><i class="fas fa-check text-orange-400 mr-2"></i>Switches PoE</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section - PÚBLICA -->
+    <section id="galeria" class="py-20 bg-cyber-dark/30 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-4">
+                    GALERÍA DE <span class="text-cyber-blue">PROYECTOS</span>
+                </h2>
+                <div class="w-24 h-1 bg-cyber-blue mx-auto"></div>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">
+                    Conoce nuestros trabajos realizados. Calidad y profesionalismo en cada instalación.
+                </p>
+            </div>
+
+            <!-- Upload Section - SOLO VISIBLE EN MODO ADMIN -->
+            <div class="upload-section max-w-4xl mx-auto mb-12">
+                <div id="uploadArea" class="border-2 border-dashed border-cyber-blue/50 rounded-2xl p-8 text-center cursor-pointer hover:bg-cyber-blue/10 transition-all" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" multiple accept="image/*" class="hidden" onchange="handleFiles(this.files)">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-cyber-blue mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-cyber-blue">Panel de Administración</h3>
+                    <p class="text-gray-400 text-sm">Arrastra fotos aquí o haz clic para subir nuevos proyectos</p>
+                    <p class="text-xs text-gray-500 mt-2">Formatos: JPG, PNG, WEBP (Máx. 5MB por imagen)</p>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button onclick="filterGallery('all')" class="filter-btn px-4 py-2 rounded-full bg-cyber-blue text-cyber-dark font-bold hover:bg-white transition-all" data-filter="all">Todos</button>
+                <button onclick="filterGallery('camaras')" class="filter-btn px-4 py-2 rounded-full border border-cyber-blue text-cyber-blue hover:bg-cyber-blue hover:text-cyber-dark transition-all" data-filter="camaras">Cámaras</button>
+                <button onclick="filterGallery('alarmas')" class="filter-btn px-4 py-2 rounded-full border border-cyber-blue text-cyber-blue hover:bg-cyber-blue hover:text-cyber-dark transition-all" data-filter="alarmas">Alarmas</button>
+                <button onclick="filterGallery('porteros')" class="filter-btn px-4 py-2 rounded-full border border-cyber-blue text-cyber-blue hover:bg-cyber-blue hover:text-cyber-dark transition-all" data-filter="porteros">Video Porteros</button>
+                <button onclick="filterGallery('cercas')" class="filter-btn px-4 py-2 rounded-full border border-cyber-blue text-cyber-blue hover:bg-cyber-blue hover:text-cyber-dark transition-all" data-filter="cercas">Cercas</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div id="galleryGrid" class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+                <!-- Las imágenes se cargan desde localStorage o las de ejemplo -->
+            </div>
+
+            <div id="emptyState" class="hidden text-center py-12">
+                <i class="fas fa-images text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400">No hay imágenes en esta categoría</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <button class="absolute top-4 right-4 text-white text-3xl hover:text-cyber-blue transition-colors z-50" onclick="closeLightbox()">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-cyber-blue transition-colors z-50" onclick="changeImage(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-cyber-blue transition-colors z-50" onclick="changeImage(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <img id="lightboxImg" src="" alt="Vista ampliada">
+        <div class="absolute bottom-4 left-0 right-0 text-center text-white">
+            <p id="lightboxCaption" class="text-lg font-bold"></p>
+        </div>
+    </div>
+
+    <!-- Projects Section -->
+    <section id="proyectos" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-4">
+                    PROYECTOS POR <span class="text-cyber-blue">TIPO</span>
+                </h2>
+                <p class="text-gray-400">Soluciones adaptadas a cada necesidad específica</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Fincas -->
+                <div class="group relative overflow-hidden rounded-2xl h-96 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-cyber-dark group-hover:scale-110 transition-transform duration-700">
+                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80')] bg-cover bg-center opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 z-20">
+                        <div class="w-14 h-14 bg-cyber-blue/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-cyber-blue transition-colors">
+                            <i class="fas fa-home text-2xl text-cyber-blue group-hover:text-cyber-dark"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-2">Fincas y Casas</h3>
+                        <p class="text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Protección perimetral completa con cámaras de largo alcance, 
+                            alarmas silenciosas y controles de acceso biométricos.
+                        </p>
+                        <button class="text-cyber-blue font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+                            Ver más <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Edificios -->
+                <div class="group relative overflow-hidden rounded-2xl h-96 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-cyber-dark group-hover:scale-110 transition-transform duration-700">
+                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80')] bg-cover bg-center opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 z-20">
+                        <div class="w-14 h-14 bg-cyber-purple/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-cyber-purple transition-colors">
+                            <i class="fas fa-building text-2xl text-cyber-purple group-hover:text-white"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-2">Edificios y Oficinas</h3>
+                        <p class="text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Sistemas integrados de video portero para múltiples apartamentos, 
+                            control de acceso centralizado y cámaras en áreas comunes.
+                        </p>
+                        <button class="text-cyber-purple font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+                            Ver más <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barrios -->
+                <div class="group relative overflow-hidden rounded-2xl h-96 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-cyber-dark group-hover:scale-110 transition-transform duration-700">
+                        <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80')] bg-cover bg-center opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 z-20">
+                        <div class="w-14 h-14 bg-alert-red/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-alert-red transition-colors">
+                            <i class="fas fa-users text-2xl text-alert-red group-hover:text-white"></i>
+                        </div>
+                        <h3 class="font-orbitron text-2xl font-bold mb-2">Seguridad de Barrios</h3>
+                        <p class="text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            Proyectos comunitarios con cámaras de lectura de placas, 
+                            puestos de vigilancia inteligentes y aplicación móvil para residentes.
+                        </p>
+                        <button class="text-alert-red font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+                            Ver más <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Form Section -->
+    <section id="cotizacion" class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-cyber-dark to-black"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-12 border border-cyber-blue/30">
+                <div class="text-center mb-10">
+                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold mb-4">
+                        SOLICITA TU <span class="text-cyber-blue">COTIZACIÓN</span>
+                    </h2>
+                    <p class="text-gray-400">Asesoría gratuita y personalizada para tu proyecto de seguridad</p>
+                </div>
+
+                <form id="quoteForm" class="space-y-6" onsubmit="handleSubmit(event)">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">Nombre completo</label>
+                            <input type="text" required class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors" placeholder="Tu nombre">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">Teléfono / WhatsApp</label>
+                            <input type="tel" required class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors" placeholder="300 000 0000">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">Correo electrónico</label>
+                            <input type="email" required class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors" placeholder="tu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">Ciudad / Región</label>
+                            <input type="text" required class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors" placeholder="Tu ubicación">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">Tipo de proyecto</label>
+                        <select required class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors">
+                            <option value="">Selecciona una opción</option>
+                            <option value="casa">Casa o Apartamento</option>
+                            <option value="finca">Finca o Casa Campestre</option>
+                            <option value="edificio">Edificio Residencial</option>
+                            <option value="oficina">Oficina o Comercio</option>
+                            <option value="barrio">Conjunto Residencial / Barrio</option>
+                            <option value="industrial">Zona Industrial</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">Servicios requeridos</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Cámaras</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Alarma</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Video Portero</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Control Acceso</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Cerca Eléctrica</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" class="form-checkbox h-5 w-5 text-cyber-blue rounded border-gray-700 bg-black/50 focus:ring-cyber-blue">
+                                <span class="text-gray-300 group-hover:text-cyber-blue transition-colors">Redes</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">Mensaje adicional</label>
+                        <textarea rows="4" class="w-full bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-cyber-blue focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-colors" placeholder="Describe tu proyecto o necesidades específicas..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-cyber-blue to-cyber-purple text-white font-bold py-4 rounded-lg hover:shadow-lg hover:shadow-cyber-blue/50 transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 text-lg">
+                        <i class="fas fa-paper-plane"></i>
+                        Enviar Solicitud
+                    </button>
+
+                    <p class="text-center text-sm text-gray-500 mt-4">
+                        <i class="fas fa-lock mr-1"></i> Tu información está protegida y será usada solo para contactarte
+                    </p>
+                </form>
+
+                <!-- Success Message (Hidden by default) -->
+                <div id="successMessage" class="hidden text-center py-12">
+                    <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-check text-4xl text-green-400"></i>
+                    </div>
+                    <h3 class="font-orbitron text-2xl font-bold mb-2">¡Solicitud Enviada!</h3>
+                    <p class="text-gray-300">Nuestro equipo te contactará en menos de 24 horas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-cyber-dark/95 border-t border-cyber-blue/30 p-4 z-40 backdrop-blur-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center animate-pulse">
+                    <i class="fab fa-whatsapp text-2xl text-green-400"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Atención inmediata</p>
+                    <p class="font-bold text-lg">318 077 6071</p>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <a href="https://wa.me/573180776071" target="_blank" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold transition-colors flex items-center gap-2">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp
+                </a>
+                <a href="tel:+573180776071" class="px-6 py-3 bg-cyber-blue hover:bg-white text-cyber-dark rounded-lg font-bold transition-colors flex items-center gap-2">
+                    <i class="fas fa-phone"></i>
+                    Llamar Ahora
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-800 pt-16 pb-24">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-cyber-blue"></i>
+                        <span class="font-orbitron text-xl font-bold">SEGURIDAD<span class="text-cyber-blue">PRO</span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Especialistas en seguridad electrónica con tecnología de punta 
+                        para proteger lo que más valoras.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-cyber-blue">Servicios</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Cámaras de Seguridad</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Video Porteros</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Sistemas de Alarma</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Control de Acceso</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Redes y Cableado</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-cyber-blue">Proyectos</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Fincas y Casas</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Edificios</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Oficinas</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Barrios Cerrados</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Industria</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-cyber-blue">Contacto</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-cyber-blue"></i>
+                            <span>Cobertura Nacional</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-phone text-cyber-blue"></i>
+                            <span>318 077 6071</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-cyber-blue"></i>
+                            <span>seguridapro4@gmail.com</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-clock text-cyber-blue"></i>
+                            <span>Atención 24/7</span>
+                        </li>
+                    </ul>
+                    <div class="flex gap-4 mt-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-cyber-blue hover:text-cyber-dark transition-all">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-cyber-blue hover:text-cyber-dark transition-all">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-cyber-blue hover:text-cyber-dark transition-all">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2026 SeguridadPro. Todos los derechos reservados. | <a href="#" class="hover:text-cyber-blue">Política de privacidad</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // CONFIGURACIÓN DE ADMINISTRADOR
+        const ADMIN_PASSWORD = 'Seguridad2024!'; // Cambia esta contraseña
+        
+        let isAdmin = false;
+        let currentImageIndex = 0;
+        let currentImages = [];
+
+        // Imágenes de ejemplo iniciales
+        const defaultImages = [
+            { src: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=600&q=80', category: 'camaras', title: 'Instalación CCTV', desc: 'Finca campestre' },
+            { src: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80', category: 'alarmas', title: 'Central de Alarma', desc: 'Edificio residencial' },
+            { src: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=600&q=80', category: 'porteros', title: 'Video Portero IP', desc: 'Casa inteligente' },
+            { src: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80', category: 'cercas', title: 'Cerca Perimetral', desc: 'Finca 5 hectáreas' }
+        ];
+
+        // Admin Functions
+        function openAdminLogin() {
+            document.getElementById('adminLogin').classList.add('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminLogin').classList.remove('active');
+        }
+
+        function checkPassword(e) {
+            e.preventDefault();
+            const input = document.getElementById('adminPassword').value;
+            
+            if (input === ADMIN_PASSWORD) {
+                isAdmin = true;
+                closeAdminLogin();
+                activateAdminMode();
+                saveGalleryToStorage(); // Asegurar que las imágenes actuales se guarden
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('adminPassword').value = '';
+            }
+            return false;
+        }
+
+        function activateAdminMode() {
+            document.body.classList.add('admin-mode');
+            document.getElementById('adminBtn').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            // Mostrar mensaje de bienvenida
+            showNotification('Modo Administrador Activado', 'success');
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            document.body.classList.remove('admin-mode');
+            document.getElementById('adminBtn').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            showNotification('Sesión cerrada', 'info');
+        }
+
+        function showNotification(message, type) {
+            const div = document.createElement('div');
+            div.className = `fixed top-24 right-4 px-6 py-3 rounded-lg z-50 font-bold transform transition-all duration-300 translate-x-full`;
+            div.style.background = type === 'success' ? 'rgba(0, 240, 255, 0.9)' : 'rgba(100, 100, 100, 0.9)';
+            div.style.color = type === 'success' ? '#0a0e27' : '#fff';
+            div.textContent = message;
+            document.body.appendChild(div);
+            
+            setTimeout(() => div.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                div.classList.add('translate-x-full');
+                setTimeout(() => div.remove(), 300);
+            }, 3000);
+        }
+
+        // Gallery Functions
+        function loadGallery() {
+            const gallery = document.getElementById('galleryGrid');
+            const stored = localStorage.getItem('seguridadpro_gallery');
+            let images = stored ? JSON.parse(stored) : defaultImages;
+            
+            gallery.innerHTML = '';
+            images.forEach((img, index) => {
+                createGalleryItem(img, index);
+            });
+            
+            checkEmptyGallery();
+        }
+
+        function createGalleryItem(imgData, index) {
+            const gallery = document.getElementById('galleryGrid');
+            const div = document.createElement('div');
+            div.className = 'gallery-item relative group';
+            div.setAttribute('data-category', imgData.category);
+            div.setAttribute('data-index', index);
+            div.onclick = function() { openLightbox(this); };
+            
+            div.innerHTML = `
+                <div class="relative overflow-hidden rounded-xl cursor-pointer">
+                    <img src="${imgData.src}" alt="${imgData.title}" class="w-full h-auto object-cover hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <div>
+                            <p class="font-bold text-white">${imgData.title}</p>
+                            <p class="text-sm text-gray-300">${imgData.desc}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteImage(event, this)" class="delete-btn absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 z-10">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
+                </div>
+            `;
+            
+            gallery.appendChild(div);
+        }
+
+        function saveGalleryToStorage() {
+            const items = document.querySelectorAll('.gallery-item');
+            const images = [];
+            
+            items.forEach(item => {
+                const img = item.querySelector('img');
+                const category = item.getAttribute('data-category');
+                const title = img.alt;
+                const desc = item.querySelector('.text-sm')?.textContent || 'Proyecto';
+                
+                images.push({
+                    src: img.src,
+                    category: category,
+                    title: title,
+                    desc: desc
+                });
+            });
+            
+            localStorage.setItem('seguridadpro_gallery', JSON.stringify(images));
+        }
+
+        // Drag and drop functionality (solo admin)
+        const uploadArea = document.getElementById('uploadArea');
+        
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                if (!isAdmin) return;
+                e.preventDefault();
+                uploadArea.style.borderColor = '#00f0ff';
+                uploadArea.style.background = 'rgba(0, 240, 255, 0.1)';
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                if (!isAdmin) return;
+                uploadArea.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+                uploadArea.style.background = 'transparent';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                if (!isAdmin) return;
+                e.preventDefault();
+                uploadArea.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+                uploadArea.style.background = 'transparent';
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+
+        function handleFiles(files) {
+            if (!isAdmin) {
+                showNotification('Acceso denegado. Inicia sesión como administrador.', 'error');
+                return;
+            }
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const newImage = {
+                            src: e.target.result,
+                            category: 'all',
+                            title: 'Nuevo Proyecto',
+                            desc: file.name.substring(0, 30)
+                        };
+                        createGalleryItem(newImage, document.querySelectorAll('.gallery-item').length);
+                        saveGalleryToStorage();
+                        checkEmptyGallery();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            showNotification('Imágenes agregadas correctamente', 'success');
+        }
+
+        function deleteImage(e, btn) {
+            e.stopPropagation();
+            
+            if (!isAdmin) {
+                showNotification('Solo administradores pueden eliminar imágenes', 'error');
+                return;
+            }
+            
+            if (confirm('¿Eliminar esta imagen permanentemente?')) {
+                const item = btn.closest('.gallery-item');
+                item.remove();
+                saveGalleryToStorage();
+                checkEmptyGallery();
+                showNotification('Imagen eliminada', 'info');
+            }
+        }
+
+        function checkEmptyGallery() {
+            const gallery = document.getElementById('galleryGrid');
+            const visibleItems = gallery.querySelectorAll('.gallery-item:not([style*="display: none"])');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (visibleItems.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.filter === category) {
+                    btn.classList.add('bg-cyber-blue', 'text-cyber-dark');
+                    btn.classList.remove('text-cyber-blue');
+                } else {
+                    btn.classList.remove('bg-cyber-blue', 'text-cyber-dark');
+                    btn.classList.add('text-cyber-blue');
+                }
+            });
+            
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            checkEmptyGallery();
+        }
+
+        function openLightbox(element) {
+            const img = element.querySelector('img');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const caption = document.getElementById('lightboxCaption');
+            
+            currentImages = Array.from(document.querySelectorAll('.gallery-item:not([style*="display: none"])'));
+            currentImageIndex = currentImages.indexOf(element);
+            
+            lightboxImg.src = img.src;
+            caption.textContent = img.alt || 'Proyecto';
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function changeImage(direction) {
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = currentImages.length - 1;
+            } else if (currentImageIndex >= currentImages.length) {
+                currentImageIndex = 0;
+            }
+            
+            const img = currentImages[currentImageIndex].querySelector('img');
+            document.getElementById('lightboxImg').src = img.src;
+            document.getElementById('lightboxCaption').textContent = img.alt || 'Proyecto';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('lightbox').classList.contains('active')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') changeImage(-1);
+                if (e.key === 'ArrowRight') changeImage(1);
+            }
+            if (e.key === 'Escape' && document.getElementById('adminLogin').classList.contains('active')) {
+                closeAdminLogin();
+            }
+        });
+
+        // Mobile menu
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('quoteForm');
+            const successMsg = document.getElementById('successMessage');
+            
+            form.style.display = 'none';
+            successMsg.classList.remove('hidden');
+            
+            setTimeout(() => {
+                form.reset();
+                form.style.display = 'block';
+                successMsg.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg', 'bg-cyber-dark/95');
+            } else {
+                nav.classList.remove('shadow-lg', 'bg-cyber-dark/95');
+            }
+        });
+
+        // Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.service-card').forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = `all 0.6s ease ${index * 0.1}s`;
+            observer.observe(el);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGallery();
+        });
+    </script>
+</body>
+</html>
